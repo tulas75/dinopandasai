@@ -1,0 +1,10 @@
+pandas
+langchain-groq
+numpy==1.26.4
+plotly
+streamlit
+pandasai
+pyYAML
+python-dotenv
+xlrd
+openpyxl
