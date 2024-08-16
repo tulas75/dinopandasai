@@ -1,14 +1,18 @@
 # dinopandasai
 
-## CREATE a python environment
+### CREATE a python environment
 python -m venv env
 
-## ACTIVATE ENV
+### ACTIVATE ENV
 
 . env/bin/activate
 
-## INSTALL requirements
+### INSTALL requirements
 pip install -r requirements
 
-## RUN APP
+### RUN APP
 streamlit run app.py
+
+
+### LLM PROVIDER SUPPORTED 
+Groq and BambooLLM
