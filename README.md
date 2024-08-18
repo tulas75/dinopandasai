@@ -15,4 +15,4 @@ streamlit run app.py
 
 
 ### LLM PROVIDER SUPPORTED 
-Groq and BambooLLM
+Groq, Together.ai and BambooLLM
