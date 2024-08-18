@@ -1,5 +1,6 @@
 pandas
 langchain-groq
+langchain-together
 numpy==1.26.4
 plotly
 streamlit

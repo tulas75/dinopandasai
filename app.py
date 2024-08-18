@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 #from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq.chat_models import ChatGroq
+from langchain_together import ChatTogether
 from dotenv import load_dotenv
 from pandasai import SmartDataframe
 from pandasai import SmartDatalake
@@ -33,13 +34,13 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('BambooLLM','Groq'),index=0)
+                            ('BambooLLM','Groq','Together'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
         
         #Get Pandas API key here
-        st.markdown("[Get Your PandasAI API key here](https://www.pandabi.ai/auth/sign-up)")
+        #st.markdown("[Get Your PandasAI API key here](https://www.pandabi.ai/auth/sign-up)")
 
     if file_upload is not None:
         data  = extract_dataframes(file_upload)
@@ -85,17 +86,28 @@ def get_LLM(llm_type,user_api_key):
                 # Configure the API key
                 os.environ["GROQ_API_KEY"]= os.getenv('GROQ_API_KEY')
 
-                
             llm = ChatGroq(model_name="llama-3.1-70b-versatile", temperature=0.3,api_key = os.environ['GROQ_API_KEY'])
 
+        #return llm
+
+        elif llm_type =='Together':
+            if user_api_key:
+                os.environ["TOGETHER_API_KEY"] = user_api_key     
+            
+            else:
+                # Configure the API key
+                os.environ["TOGETHER_API_KEY"]= os.getenv('TOGETHER_API_KEY')
+
+            llm = ChatTogether(model="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", temperature=0.3,together_api_key = os.environ['TOGETHER_API_KEY'])
         return llm
+
     except Exception as e:
         #st.error(e)
         st.error("No/Incorrect API key provided! Please Provide/Verify your API key")
 
    
 
-#Functuion for chat window
+#Function for chat window
 def chat_window(analyst):
     with st.chat_message("assistant"):
         st.text("Explore your data with PandasAI?🧐")
