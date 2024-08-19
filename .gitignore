@@ -10,6 +10,7 @@ dist/
 env/
 cache/
 exports/
+.env
 
 # Compiled Java class files
 *.class

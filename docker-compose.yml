@@ -1,0 +1,6 @@
+services:
+  dinopandasai:
+    image: devgnucoop/dinopandasai:${VERSION}
+    restart: always
+    ports:
+      - "${PORT}:8501"
