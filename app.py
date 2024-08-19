@@ -3,6 +3,8 @@ import pandas as pd
 #from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq.chat_models import ChatGroq
 from langchain_together import ChatTogether
+from langchain_openai import ChatOpenAI
+
 from dotenv import load_dotenv
 from pandasai import SmartDataframe
 from pandasai import SmartDatalake
@@ -34,7 +36,7 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('BambooLLM','Groq','Together'),index=0)
+                            ('BambooLLM','Groq','Together','OpenAI'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
@@ -59,8 +61,6 @@ def main():
             #starting the chat with the PandasAI agent
             chat_window(analyst)
             
-        
-
     else:
         st.warning("Please upload your data first! You can upload a CSV or an Excel file.")
 
@@ -99,6 +99,16 @@ def get_LLM(llm_type,user_api_key):
                 os.environ["TOGETHER_API_KEY"]= os.getenv('TOGETHER_API_KEY')
 
             llm = ChatTogether(model="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", temperature=0.3,together_api_key = os.environ['TOGETHER_API_KEY'])
+
+        elif llm_type =='OpenAI':
+            if user_api_key:
+                os.environ["OPENAI_API_KEY"] = user_api_key     
+            
+            else:
+                # Configure the API key
+                os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
+                llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
+
         return llm
 
     except Exception as e:
@@ -125,7 +135,7 @@ def chat_window(analyst):
             #printing the code generated and the evaluated code
             elif 'response' in message:
                 #getting the response
-                st.write(message['response'])
+                st.write(message["response"])
                 
             #retrieving error messages
             elif 'error' in message:
