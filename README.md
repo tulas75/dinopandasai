@@ -18,4 +18,5 @@ Groq, Together.ai, OpenAI and BambooLLM
 
 ### Docker
 docker build -t your-app-name
+
 docker run -p 8501:8501 your-app-name
