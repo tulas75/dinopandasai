@@ -4,3 +4,11 @@ services:
     restart: always
     ports:
       - "${PORT}:8501"
+    volumes:
+      - ./cache:/app/cache
+      - ./exports:/app/exports
+    environment:
+      - LANGCHAIN_TRACING_V2 = ${LANGCHAIN_TRACING_V2} 
+      - LANGCHAIN_PROJECT = ${LANGCHAIN_PROJECT}
+      - LANGCHAIN_ENDPOINT = ${LANGCHAIN_ENDPOINT}
+      - LANGCHAIN_API_KEY = ${LANGCHAIN_API_KEY}

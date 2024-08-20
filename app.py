@@ -16,10 +16,25 @@ import os
 # Load environment variables
 load_dotenv()
 
+#LANGSMITH VAR
+langchain_tracing_v2 = os.getenv('LANGCHAIN_TRACING_V2')
+langchain_project = os.getenv('LANGCHAIN_PROJECT')
+langchain_endpoint = os.getenv('LANGCHAIN_ENDPOINT')
+langchain_api_key = os.getenv('LANGCHAIN_API_KEY')
+
+# If you want to set new values for the environment variables
+os.environ['LANGCHAIN_TRACING_V2'] = langchain_tracing_v2
+os.environ['LANGCHAIN_PROJECT'] = langchain_project
+os.environ['LANGCHAIN_ENDPOINT'] = langchain_endpoint
+os.environ['LANGCHAIN_API_KEY'] = langchain_api_key
+
+
 #Dictionary to store the extracted dataframes
 data = {}
 
 def main():
+
+
     st.set_page_config(page_title = "PandasAI",page_icon = "🐼")
     st.title("Chat with Your Data using PandasAI:🐼")
     #reading the csv file
