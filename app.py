@@ -11,6 +11,9 @@ from pandasai import SmartDatalake
 from pandasai.llm import BambooLLM
 from pandasai import Agent
 from pandasai.responses.streamlit_response import StreamlitResponse
+
+import matplotlib.pyplot as plt
+
 import os
 
 # Load environment variables
@@ -51,7 +54,7 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('BambooLLM','Groq','Together','OpenAI'),index=0)
+                            ('Groq','BambooLLM','Together','OpenAI'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
@@ -151,14 +154,12 @@ def chat_window(analyst):
             elif 'response' in message:
                 #getting the response
                 st.write(message["response"])
-                
             #retrieving error messages
             elif 'error' in message:
                 st.text(message['error'])
     #Getting the questions from the users
     user_question = st.chat_input("What are you curious about? ")
-
-    
+   
     if user_question:
         #Displaying the user question in the chat message
         with st.chat_message("user"):
@@ -169,9 +170,15 @@ def chat_window(analyst):
         try:
             with st.spinner("Analyzing..."):
                 response = analyst.chat(user_question)
-                st.write(response)
-                st.session_state.messages.append({"role":"assistant","response":response})
-        
+                if os.path.exists("exports/charts/temp_chart.png"):
+                     im = plt.imread("exports/charts/temp_chart.png")
+                     st.image(im)
+                     st.session_state.messages.append({"role":"assistant","response":response})
+                     os.remove("exports/charts/temp_chart.png")
+                else:
+                    st.write(response)
+                    st.session_state.messages.append({"role":"assistant","response":response})
+       
         except Exception as e:
             st.write(e)
             error_message = "⚠️Sorry, Couldn't generate the answer! Please try rephrasing your question!"
