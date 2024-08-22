@@ -70,7 +70,7 @@ def main():
                           tuple(data.keys()),index=0
                           )
         st.dataframe(data[df])
-
+        
         
         llm = get_LLM(llm_type,user_api_key)
 
@@ -180,13 +180,16 @@ def chat_window(analyst):
         try:
             with st.spinner("Analyzing..."):
                 response = analyst.chat(user_question)
+                explanation = analyst.explain()
                 if os.path.exists("exports/charts/temp_chart.png"):
                      im = plt.imread("exports/charts/temp_chart.png")
                      st.image(im)
+                     st.write(explanation)
                      st.session_state.messages.append({"role":"assistant","response":response})
                      os.remove("exports/charts/temp_chart.png")
                 else:
                     st.write(response)
+                    st.write(explanation)
                     st.session_state.messages.append({"role":"assistant","response":response})
        
         except Exception as e:
@@ -212,7 +215,6 @@ def get_agent(data,llm):
     agent = Agent(list(data.values()),config = {"llm":llm,"verbose": True, "response_parser": StreamlitResponse})
 
     return agent
-
 
 def extract_dataframes(raw_file):
     """
