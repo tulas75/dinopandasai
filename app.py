@@ -5,11 +5,12 @@ from langchain_groq.chat_models import ChatGroq
 from langchain_together import ChatTogether
 from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
+from langchain_mistralai import ChatMistralAI
 
 
 from dotenv import load_dotenv
 from pandasai import SmartDataframe
-from pandasai import SmartDatalake
+#from pandasai import SmartDatalake
 from pandasai.llm import BambooLLM
 from pandasai import Agent
 from pandasai.responses.streamlit_response import StreamlitResponse
@@ -56,7 +57,7 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('Groq','BambooLLM','Together','OpenAI','Ollama'),index=0)
+                            ('Groq','Mistral','BambooLLM','Together','OpenAI','Ollama'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
@@ -108,7 +109,15 @@ def get_LLM(llm_type,user_api_key):
 
             llm = ChatGroq(model_name="llama-3.1-70b-versatile", temperature=0.3,api_key = os.environ['GROQ_API_KEY'])
 
-        #return llm
+        elif llm_type =='Mistral':
+            if user_api_key:
+                os.environ["MISTRAL_API_KEY"] = user_api_key     
+            
+            else:
+                # Configure the API key
+                os.environ["MISTRAL_API_KEY"]= os.getenv('MISTRAL_API_KEY')
+            
+            llm = ChatMistralAI(model_name="open-mistral-nemo", temperature=0.3,api_key = os.environ['MISTRAL_API_KEY'])
 
         elif llm_type =='Together':
             if user_api_key:

@@ -9,3 +9,5 @@ pyYAML
 python-dotenv
 xlrd
 openpyxl
+langchain_mistralai
+langchain-ollama
