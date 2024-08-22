@@ -14,7 +14,7 @@ pip install -r requirements
 streamlit run app.py
 
 ### LLM PROVIDER SUPPORTED 
-Groq, Together.ai, OpenAI and BambooLLM
+Groq, Together.ai, OpenAI, Ollama and BambooLLM
 
 ### Docker
 docker build -t your-app-name
