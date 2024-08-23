@@ -144,7 +144,7 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
-             llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
 
 
         elif llm_type =='Ollama':
