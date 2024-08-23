@@ -40,7 +40,6 @@ data = {}
 
 def main():
 
-
     st.set_page_config(page_title = "PandasAI",page_icon = "🐼")
     st.title("Chat with Your Data using PandasAI:🐼")
     #reading the csv file
@@ -57,7 +56,7 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('','Groq','Mistral','BambooLLM','Together','OpenAI','Ollama','Deepseek'),index=0)
+                            ('Groq','Mistral','BambooLLM','Together','Deepseek','OpenAI','Ollama'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
@@ -129,15 +128,6 @@ def get_LLM(llm_type,user_api_key):
 
             llm = ChatTogether(model="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", temperature=0.3,together_api_key = os.environ['TOGETHER_API_KEY'])
 
-        elif llm_type =='OpenAI':
-            if user_api_key:
-                os.environ["OPENAI_API_KEY"] = user_api_key     
-            
-            else:
-                # Configure the API key
-                os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
-                llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
-
         elif llm_type =='Deepseek':
             if user_api_key:
                 os.environ["DEEPSEEK_API_KEY"] = user_api_key     
@@ -145,7 +135,17 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["DEEPSEEK_API_KEY"]= os.getenv('DEEPSEEK_API_KEY')
-                llm = ChatOpenAI(model="deepseek-coder", temperature=0.3,base_url='https://api.deepseek.com', api_key = os.environ['DEEPSEEK_API_KEY'])
+            llm = ChatOpenAI(model="deepseek-coder", temperature=0.3,base_url='https://api.deepseek.com', api_key = os.environ['DEEPSEEK_API_KEY'])
+
+        elif llm_type =='OpenAI':
+            if user_api_key:
+                os.environ["OPENAI_API_KEY"] = user_api_key     
+            
+            else:
+                # Configure the API key
+                os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
+             llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
+
 
         elif llm_type =='Ollama':
             if user_api_key:
@@ -154,7 +154,7 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["OLLAMA_API_KEY"]="NOKEY" 
-                llm = ChatOpenAI(model="llama3.1:8b", temperature=0.3,base_url="http://127.0.0.1:11434/v1/")
+            llm = ChatOpenAI(model="llama3.1:8b", temperature=0.3,base_url="http://127.0.0.1:11434/v1/")
         return llm
 
     except Exception as e:
