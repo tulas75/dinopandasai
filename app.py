@@ -57,7 +57,7 @@ def main():
         #selecting LLM to use
         llm_type = st.selectbox(
                             "Please select LLM",
-                            ('Groq','Mistral','BambooLLM','Together','OpenAI','Ollama'),index=0)
+                            ('','Groq','Mistral','BambooLLM','Together','OpenAI','Ollama','Deepseek'),index=0)
         
         #Adding users API Key
         user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
@@ -137,6 +137,15 @@ def get_LLM(llm_type,user_api_key):
                 # Configure the API key
                 os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
                 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
+
+        elif llm_type =='Deepseek':
+            if user_api_key:
+                os.environ["DEEPSEEK_API_KEY"] = user_api_key     
+            
+            else:
+                # Configure the API key
+                os.environ["DEEPSEEK_API_KEY"]= os.getenv('DEEPSEEK_API_KEY')
+                llm = ChatOpenAI(model="deepseek-coder", temperature=0.3,base_url='https://api.deepseek.com', api_key = os.environ['DEEPSEEK_API_KEY'])
 
         elif llm_type =='Ollama':
             if user_api_key:
