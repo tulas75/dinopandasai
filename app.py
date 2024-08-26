@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 #from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq.chat_models import ChatGroq
 from langchain_together import ChatTogether
