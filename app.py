@@ -50,7 +50,16 @@ def main():
         st.sidebar.text("Version 0.5.1")
         #Activating Demo Data
         st.text("Data Setup: 📝")
-        file_upload = st.file_uploader("Upload your Data",accept_multiple_files=False,type = ['csv','xls','xlsx'])
+        data_source = st.selectbox("Choose Data Source", ["Upload File", "Connect to Database"])
+    
+        if data_source == "Upload File":
+            file_upload = st.file_uploader("Upload your Data", accept_multiple_files=False, type=['csv', 'xls', 'xlsx'])
+        elif data_source == "Connect to Database":
+            db_type = st.selectbox("Select Database Type", ["MySQL", "PostgreSQL", "SQLite"])
+            db_host = st.text_input("Database Host")
+            db_name = st.text_input("Database Name")
+            db_user = st.text_input("Database User")
+            db_password = st.text_input("Database Password", type='password')
 
         st.markdown(":green[*Please ensure the first row has the column names.*]")
 
