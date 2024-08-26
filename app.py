@@ -224,6 +224,8 @@ def chat_window(analyst):
     #Function to clear history
     def clear_chat_history():
         st.session_state.messages = []
+        if "images" in st.session_state:
+            st.session_state.images = []
     #Button for clearing history
     st.sidebar.text("Click to Clear Chat history")
     st.sidebar.button("CLEAR 🗑️",on_click=clear_chat_history)
