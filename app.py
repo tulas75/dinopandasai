@@ -175,16 +175,19 @@ def chat_window(analyst):
     #Displaying the message history on re-reun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
-            #priting the questions
+            # Printing the questions
             if 'question' in message:
                 st.markdown(message["question"])
-            #printing the code generated and the evaluated code
+            # Printing the code generated and the evaluated code
             elif 'response' in message:
-                #getting the response
+                # Getting the response
                 st.write(message["response"])
-            #retrieving error messages
+            # Retrieving error messages
             elif 'error' in message:
                 st.text(message['error'])
+    if "images" in st.session_state:
+        for img in st.session_state.images:
+            st.image(img)
     #Getting the questions from the users
     user_question = st.chat_input("What are you curious about? ")
    
@@ -200,11 +203,12 @@ def chat_window(analyst):
                 response = analyst.chat(user_question)
                 explanation = analyst.explain()
                 if os.path.exists("exports/charts/temp_chart.png"):
-                     im = plt.imread("exports/charts/temp_chart.png")
-                     st.image(im)
-                     st.write(explanation)
-                     st.session_state.messages.append({"role":"assistant","response":response})
-                     os.remove("exports/charts/temp_chart.png")
+                    im = plt.imread("exports/charts/temp_chart.png")
+                    if "images" not in st.session_state:
+                        st.session_state.images = []
+                    st.session_state.images.append(im)
+                    st.session_state.messages.append({"role":"assistant","response":response})
+                    os.remove("exports/charts/temp_chart.png")
                 else:
                     st.write(response)
                     st.write(explanation)
