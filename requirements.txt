@@ -12,3 +12,4 @@ openpyxl
 langchain_mistralai
 langchain-ollama
 seaborn
+sqlalchemy
