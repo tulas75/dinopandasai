@@ -39,6 +39,7 @@ os.environ['LANGCHAIN_API_KEY'] = langchain_api_key
 data = {}
 
 def main():
+    file_upload = None
 
     st.set_page_config(page_title = "PandasAI",page_icon = "🐼")
     st.title("Chat with Your Data using PandasAI:🐼")
@@ -74,7 +75,7 @@ def main():
         #Get Pandas API key here
         #st.markdown("[Get Your PandasAI API key here](https://www.pandabi.ai/auth/sign-up)")
 
-    if file_upload is not None:
+    if file_upload is not None and data_source == "Upload File":
         data  = extract_dataframes(file_upload)
         df = st.selectbox("Here's your uploaded data!",
                           tuple(data.keys()),index=0
