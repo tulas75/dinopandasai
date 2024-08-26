@@ -55,10 +55,13 @@ def main():
             file_upload = st.file_uploader("Upload your Data", accept_multiple_files=False, type=['csv', 'xls', 'xlsx'])
         elif data_source == "Connect to Database":
             db_type = st.selectbox("Select Database Type", ["MySQL", "PostgreSQL", "SQLite"])
-            db_host = st.text_input("Database Host")
-            db_name = st.text_input("Database Name")
-            db_user = st.text_input("Database User")
-            db_password = st.text_input("Database Password", type='password')
+            if db_type == "SQLite":
+                db_file = st.file_uploader("Upload SQLite Database", type=['db', 'sqlite', 'sqlite3'])
+            else:
+                db_host = st.text_input("Database Host")
+                db_name = st.text_input("Database Name")
+                db_user = st.text_input("Database User")
+                db_password = st.text_input("Database Password", type='password')
 
         st.markdown(":green[*Please ensure the first row has the column names.*]")
 
@@ -72,7 +75,13 @@ def main():
     if data_source == "Upload File" and file_upload is not None:
         data = extract_dataframes(file_upload)
     elif data_source == "Connect to Database":
-        data = extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password)
+        if db_type == "SQLite":
+            if db_file is not None:
+                data = extract_dataframes_from_db(db_type, db_file=db_file)
+            else:
+                st.warning("Please upload a SQLite database file.")
+        else:
+            data = extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password)
 
     if data:
         if isinstance(data, dict) and len(data) > 0:
@@ -246,18 +255,28 @@ def get_agent(dataframes, llm):
     agent = Agent(dataframes, config={"llm": llm, "verbose": True, "response_parser": StreamlitResponse})
     return agent
 
-def extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password):
+def extract_dataframes_from_db(db_type, db_host=None, db_name=None, db_user=None, db_password=None, db_file=None):
     try:
         if db_type == "MySQL":
             db_connection_str = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
         elif db_type == "PostgreSQL":
             db_connection_str = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
         elif db_type == "SQLite":
-            db_connection_str = f"sqlite:///{db_name}"
+            if db_file is None:
+                raise ValueError("SQLite database file not provided")
+            db_connection_str = f"sqlite:///{db_file.name}"
         else:
             raise ValueError(f"Unsupported database type: {db_type}")
 
-        engine = create_engine(db_connection_str)
+        if db_type == "SQLite":
+            engine = create_engine(db_connection_str)
+            with engine.connect() as connection:
+                inspector = inspect(engine)
+                dfs = {}
+                for table_name in inspector.get_table_names():
+                    dfs[table_name] = pd.read_sql_table(table_name, connection)
+        else:
+            engine = create_engine(db_connection_str)
         with engine.connect() as connection:
             inspector = inspect(engine)
             dfs = {}
