@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from sqlalchemy import create_engine
 #from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq.chat_models import ChatGroq
 from langchain_together import ChatTogether
@@ -75,8 +76,12 @@ def main():
         #Get Pandas API key here
         #st.markdown("[Get Your PandasAI API key here](https://www.pandabi.ai/auth/sign-up)")
 
-    if file_upload is not None and data_source == "Upload File":
-        data  = extract_dataframes(file_upload)
+    if data_source == "Upload File":
+        if file_upload is not None:
+            data  = extract_dataframes(file_upload)
+    elif data_source == "Connect to Database":
+        db_connection_str = f"{db_type}://{db_user}:{db_password}@{db_host}/{db_name}"
+        data = extract_dataframes_from_db(db_connection_str)
         df = st.selectbox("Here's your uploaded data!",
                           tuple(data.keys()),index=0
                           )
@@ -253,6 +258,14 @@ def get_agent(data,llm):
     agent = Agent(list(data.values()),config = {"llm":llm,"verbose": True, "response_parser": StreamlitResponse})
 
     return agent
+
+def extract_dataframes_from_db(db_connection_str):
+    engine = create_engine(db_connection_str)
+    inspector = inspect(engine)
+    dfs = {}
+    for table_name in inspector.get_table_names():
+        dfs[table_name] = pd.read_sql_table(table_name, engine)
+    return dfs
 
 def extract_dataframes(raw_file):
     """
