@@ -106,7 +106,7 @@ def get_LLM(llm_type,user_api_key):
                 # Configure the API key
                 os.environ["GROQ_API_KEY"]= os.getenv('GROQ_API_KEY')
 
-            llm = ChatGroq(model_name="llama-3.1-70b-versatile", temperature=0.3,api_key = os.environ['GROQ_API_KEY'])
+            llm = ChatGroq(model_name="llama-3.1-70b-versatile", temperature=0, seed=26, api_key = os.environ['GROQ_API_KEY'])
 
         elif llm_type =='Mistral':
             if user_api_key:
@@ -116,7 +116,7 @@ def get_LLM(llm_type,user_api_key):
                 # Configure the API key
                 os.environ["MISTRAL_API_KEY"]= os.getenv('MISTRAL_API_KEY')
             
-            llm = ChatMistralAI(model_name="open-mistral-nemo", temperature=0.3,api_key = os.environ['MISTRAL_API_KEY'])
+            llm = ChatMistralAI(model_name="open-mistral-nemo", temperature=0,api_key = os.environ['MISTRAL_API_KEY'])
 
         elif llm_type =='Together':
             if user_api_key:
@@ -126,7 +126,7 @@ def get_LLM(llm_type,user_api_key):
                 # Configure the API key
                 os.environ["TOGETHER_API_KEY"]= os.getenv('TOGETHER_API_KEY')
 
-            llm = ChatTogether(model="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", temperature=0.3,together_api_key = os.environ['TOGETHER_API_KEY'])
+            llm = ChatTogether(model="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", temperature=0,together_api_key = os.environ['TOGETHER_API_KEY'])
 
         elif llm_type =='Deepseek':
             if user_api_key:
@@ -135,7 +135,7 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["DEEPSEEK_API_KEY"]= os.getenv('DEEPSEEK_API_KEY')
-            llm = ChatOpenAI(model="deepseek-coder", temperature=0.3,base_url='https://api.deepseek.com', api_key = os.environ['DEEPSEEK_API_KEY'])
+            llm = ChatOpenAI(model="deepseek-coder", temperature=0,base_url='https://api.deepseek.com', api_key = os.environ['DEEPSEEK_API_KEY'])
 
         elif llm_type =='OpenAI':
             if user_api_key:
@@ -144,7 +144,7 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["OPENAI_API_KEY"]= os.getenv('OPENAI_API_KEY')
-            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3,api_key = os.environ['OPENAI_API_KEY'])
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0,api_key = os.environ['OPENAI_API_KEY'])
 
 
         elif llm_type =='Ollama':
@@ -154,7 +154,7 @@ def get_LLM(llm_type,user_api_key):
             else:
                 # Configure the API key
                 os.environ["OLLAMA_API_KEY"]="NOKEY" 
-            llm = ChatOpenAI(model="llama3.1:8b", temperature=0.3,base_url="http://127.0.0.1:11434/v1/")
+            llm = ChatOpenAI(model="llama3.1:8b", temperature=0,base_url="http://127.0.0.1:11434/v1/")
         return llm
 
     except Exception as e:
