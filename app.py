@@ -229,6 +229,7 @@ def chat_window(analyst):
     #Button for clearing history
     st.sidebar.text("Click to Clear Chat history")
     st.sidebar.button("CLEAR 🗑️",on_click=clear_chat_history)
+    st.sidebar.text("Version 0.5.1")
 
         
 def get_agent(data,llm):
