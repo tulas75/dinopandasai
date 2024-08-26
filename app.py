@@ -273,10 +273,11 @@ def extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password):
             raise ValueError(f"Unsupported database type: {db_type}")
 
         engine = create_engine(db_connection_str)
-        inspector = inspect(engine)
-        dfs = {}
-        for table_name in inspector.get_table_names():
-            dfs[table_name] = pd.read_sql_table(table_name, engine)
+        with engine.connect() as connection:
+            inspector = inspect(engine)
+            dfs = {}
+            for table_name in inspector.get_table_names():
+                dfs[table_name] = pd.read_sql_table(table_name, connection)
         return dfs
     except Exception as e:
         st.error(f"Error connecting to the database: {str(e)}")
