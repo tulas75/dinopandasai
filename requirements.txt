@@ -13,3 +13,4 @@ langchain_mistralai
 langchain-ollama
 seaborn
 sqlalchemy
+psycopg2
