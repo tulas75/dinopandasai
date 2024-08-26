@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine, inspect
-from sqlalchemy.dialects.postgresql import dialect as postgresql_dialect
 #from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq.chat_models import ChatGroq
 from langchain_together import ChatTogether
@@ -81,12 +80,14 @@ def main():
         if file_upload is not None:
             data  = extract_dataframes(file_upload)
     elif data_source == "Connect to Database":
-        db_connection_str = f"{db_type}://{db_user}:{db_password}@{db_host}/{db_name}"
-        data = extract_dataframes_from_db(db_connection_str)
-        df = st.selectbox("Here's your uploaded data!",
-                          tuple(data.keys()),index=0
-                          )
-        st.dataframe(data[df])
+        data = extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password)
+        if data:
+            df = st.selectbox("Here's your uploaded data!",
+                              tuple(data.keys()),index=0
+                              )
+            st.dataframe(data[df])
+        else:
+            st.warning("Failed to connect to the database or no data was retrieved.")
         
         
         llm = get_LLM(llm_type,user_api_key)
@@ -260,13 +261,26 @@ def get_agent(data,llm):
 
     return agent
 
-def extract_dataframes_from_db(db_connection_str):
-    engine = create_engine(db_connection_str)
-    inspector = inspect(engine)
-    dfs = {}
-    for table_name in inspector.get_table_names():
-        dfs[table_name] = pd.read_sql_table(table_name, engine)
-    return dfs
+def extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password):
+    try:
+        if db_type == "MySQL":
+            db_connection_str = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+        elif db_type == "PostgreSQL":
+            db_connection_str = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+        elif db_type == "SQLite":
+            db_connection_str = f"sqlite:///{db_name}"
+        else:
+            raise ValueError(f"Unsupported database type: {db_type}")
+
+        engine = create_engine(db_connection_str)
+        inspector = inspect(engine)
+        dfs = {}
+        for table_name in inspector.get_table_names():
+            dfs[table_name] = pd.read_sql_table(table_name, engine)
+        return dfs
+    except Exception as e:
+        st.error(f"Error connecting to the database: {str(e)}")
+        return {}
 
 def extract_dataframes(raw_file):
     """
