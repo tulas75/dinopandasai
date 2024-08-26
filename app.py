@@ -42,15 +42,12 @@ data = {}
 def main():
     file_upload = None
 
-    st.set_page_config(page_title = "PandasAI",page_icon = "🐼")
+    st.set_page_config(page_title="PandasAI", page_icon="🐼")
     st.title("Chat with Your Data using PandasAI:🐼")
-    #reading the csv file
-    
-    #Side Menu Bar
+
     with st.sidebar:
         st.title("Configuration:⚙️")
         st.sidebar.text("Version 0.5.1")
-        #Activating Demo Data
         st.text("Data Setup: 📝")
         data_source = st.selectbox("Choose Data Source", ["Upload File", "Connect to Database"])
     
@@ -65,42 +62,31 @@ def main():
 
         st.markdown(":green[*Please ensure the first row has the column names.*]")
 
-        #selecting LLM to use
         llm_type = st.selectbox(
-                            "Please select LLM",
-                            ('Groq','Mistral','BambooLLM','Together','Deepseek','OpenAI','Ollama'),index=0)
+            "Please select LLM",
+            ('Groq','Mistral','BambooLLM','Together','Deepseek','OpenAI','Ollama'),index=0)
         
-        #Adding users API Key
-        user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type = 'password')
-        
-        #Get Pandas API key here
-        #st.markdown("[Get Your PandasAI API key here](https://www.pandabi.ai/auth/sign-up)")
+        user_api_key = st.text_input('Please add your API key',placeholder='Paste your API key here',type='password')
 
-    if data_source == "Upload File":
-        if file_upload is not None:
-            data  = extract_dataframes(file_upload)
+    data = {}
+    if data_source == "Upload File" and file_upload is not None:
+        data = extract_dataframes(file_upload)
     elif data_source == "Connect to Database":
         data = extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password)
-        if data:
-            df = st.selectbox("Here's your uploaded data!",
-                              tuple(data.keys()),index=0
-                              )
-            st.dataframe(data[df])
+
+    if data:
+        if isinstance(data, dict) and len(data) > 0:
+            df_name = st.selectbox("Select a dataframe:", list(data.keys()), index=0)
+            st.dataframe(data[df_name])
+
+            llm = get_LLM(llm_type, user_api_key)
+            if llm:
+                analyst = get_agent([data[df_name]], llm)
+                chat_window(analyst)
         else:
-            st.warning("Failed to connect to the database or no data was retrieved.")
-        
-        
-        llm = get_LLM(llm_type,user_api_key)
-
-        if llm:
-            #Instattiating PandasAI agent
-            analyst = get_agent(data,llm)
-
-            #starting the chat with the PandasAI agent
-            chat_window(analyst)
-            
+            st.warning("No data available. Please check your data source.")
     else:
-        st.warning("Please upload your data first! You can upload a CSV or an Excel file.")
+        st.warning("Please upload your data or connect to a database first!")
 
 #Function to get LLM
 def get_LLM(llm_type,user_api_key):
@@ -249,16 +235,15 @@ def chat_window(analyst):
     st.sidebar.button("CLEAR 🗑️",on_click=clear_chat_history)
 
         
-def get_agent(data,llm):
+def get_agent(dataframes, llm):
     """
-    The function creates an agent on the dataframes exctracted from the uploaded files
+    The function creates an agent on the dataframes extracted from the uploaded files
     Args: 
-        data: A Dictionary with the dataframes extracted from the uploaded data
-        llm:  llm object based on the ll type selected
+        dataframes: A list of dataframes extracted from the uploaded data
+        llm: llm object based on the llm type selected
     Output: PandasAI Agent
     """
-    agent = Agent(list(data.values()),config = {"llm":llm,"verbose": True, "response_parser": StreamlitResponse})
-
+    agent = Agent(dataframes, config={"llm": llm, "verbose": True, "response_parser": StreamlitResponse})
     return agent
 
 def extract_dataframes_from_db(db_type, db_host, db_name, db_user, db_password):
