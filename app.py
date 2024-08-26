@@ -207,6 +207,9 @@ def chat_window(analyst):
                     if "images" not in st.session_state:
                         st.session_state.images = []
                     st.session_state.images.append(im)
+                    with st.chat_message("assistant"):
+                        st.image(im)
+                        st.write(response)
                     st.session_state.messages.append({"role":"assistant","response":response})
                     os.remove("exports/charts/temp_chart.png")
                 else:
