@@ -47,6 +47,7 @@ def main():
     #Side Menu Bar
     with st.sidebar:
         st.title("Configuration:⚙️")
+        st.sidebar.text("Version 0.5.1")
         #Activating Demo Data
         st.text("Data Setup: 📝")
         file_upload = st.file_uploader("Upload your Data",accept_multiple_files=False,type = ['csv','xls','xlsx'])
@@ -229,7 +230,6 @@ def chat_window(analyst):
     #Button for clearing history
     st.sidebar.text("Click to Clear Chat history")
     st.sidebar.button("CLEAR 🗑️",on_click=clear_chat_history)
-    st.sidebar.text("Version 0.5.1")
 
         
 def get_agent(data,llm):
