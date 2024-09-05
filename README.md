@@ -1,3 +1,6 @@
+[![Gnucoop Soc. Coop.](https://gnucoop.com/static/logo-gnu-71ab6373697553719b2d4ff79200204a.png)](https://gnucoop.com)
+
+
 # dinopandasai
 
 ### CREATE a python environment
